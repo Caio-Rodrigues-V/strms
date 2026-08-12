@@ -516,14 +516,6 @@ function showResultCard(stats) {
     document.getElementById("res-map-email").textContent = mapping.email || "Não encontrada";
     document.getElementById("res-map-phone").textContent = mapping.phone || "Não encontrada";
 
-    // Atualizar texto do botão se for ZIP
-    const btnDownload = document.getElementById("btn-download-filtered");
-    if (stats.is_zip) {
-        btnDownload.innerHTML = `<span class="material-icons-round">download</span> Baixar Leads Divididos (.zip)`;
-    } else {
-        btnDownload.innerHTML = `<span class="material-icons-round">download</span> Baixar Planilha Filtrada (.xlsx)`;
-    }
-
     box.style.display = "flex";
     setTimeout(() => {
         box.classList.add("active");

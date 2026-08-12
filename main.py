@@ -100,7 +100,7 @@ async def process_leads(
                 "phone": col_phone
             }
             
-        filtered_bytes, stats, is_zip = process_new_leads_sheet(
+        filtered_bytes, stats = process_new_leads_sheet(
             contents, 
             file.filename, 
             custom_mapping=custom_mapping
@@ -112,17 +112,12 @@ async def process_leads(
         # Salvar em cache em memória para download
         file_id = str(uuid.uuid4())
         
-        # Gerar o nome de saída (ex: original_filtrado.xlsx ou original_filtrado_dividido.zip)
+        # Gerar o nome de saída (ex: original_filtrado.xlsx)
         base_name, ext = os.path.splitext(file.filename)
-        if is_zip:
-            output_filename = f"{base_name}_filtrado_dividido.zip"
-            output_ext = ".zip"
-        else:
-            output_filename = f"{base_name}_filtrado{ext}"
-            output_ext = ext
-            
+        output_filename = f"{base_name}_filtrado{ext}"
+        
         # Salvar também em disco físico na pasta temp_exports para segurança
-        temp_path = os.path.join("temp_exports", f"{file_id}{output_ext}")
+        temp_path = os.path.join("temp_exports", f"{file_id}{ext}")
         with open(temp_path, "wb") as f:
             f.write(filtered_bytes)
             

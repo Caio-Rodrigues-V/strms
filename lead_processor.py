@@ -179,44 +179,18 @@ def process_new_leads_sheet(file_bytes, filename, custom_mapping=None):
     inserted_count = insert_leads_bulk(new_leads_to_insert)
     
     # Gerar o arquivo de saída em bytes
+    output_bytes = io.BytesIO()
     ext = os.path.splitext(filename)[1].lower()
     
-    # Decidir se vamos dividir em blocos de 30
-    if len(filtered_df) > 30:
-        zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-            # Dividir o DataFrame em blocos de 30
-            for i in range(0, len(filtered_df), 30):
-                chunk = filtered_df.iloc[i:i+30]
-                chunk_bytes = io.BytesIO()
-                
-                if ext == '.csv':
-                    chunk.to_csv(chunk_bytes, index=False, sep=';', encoding='utf-8-sig')
-                    file_ext = '.csv'
-                else:
-                    with pd.ExcelWriter(chunk_bytes, engine='openpyxl') as writer:
-                        chunk.to_excel(writer, index=False)
-                    file_ext = '.xlsx'
-                    
-                chunk_bytes.seek(0)
-                part_num = (i // 30) + 1
-                zip_file.writestr(f"leads_novos_parte_{part_num}{file_ext}", chunk_bytes.getvalue())
-                
-        zip_buffer.seek(0)
-        output_data = zip_buffer.getvalue()
-        is_zip = True
+    if ext == '.csv':
+        filtered_df.to_csv(output_bytes, index=False, sep=';', encoding='utf-8-sig')
     else:
-        output_bytes = io.BytesIO()
-        if ext == '.csv':
-            filtered_df.to_csv(output_bytes, index=False, sep=';', encoding='utf-8-sig')
-        else:
-            with pd.ExcelWriter(output_bytes, engine='openpyxl') as writer:
-                filtered_df.to_excel(writer, index=False)
-        output_bytes.seek(0)
-        output_data = output_bytes.getvalue()
-        is_zip = False
-        
-    stats = {
+        with pd.ExcelWriter(output_bytes, engine='openpyxl') as writer:
+            filtered_df.to_excel(writer, index=False)
+            
+    output_bytes.seek(0)
+    
+    return output_bytes.getvalue(), {
         "total_rows": total_original,
         "new_leads": inserted_count,
         "duplicates_removed": duplicates_count,
@@ -224,11 +198,8 @@ def process_new_leads_sheet(file_bytes, filename, custom_mapping=None):
             "name": name_col,
             "email": email_col,
             "phone": phone_col
-        },
-        "is_zip": is_zip
+        }
     }
-    
-    return output_data, stats, is_zip
 
 def import_historical_sheet(file_bytes, filename, custom_mapping=None):
     """
