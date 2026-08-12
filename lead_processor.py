@@ -15,36 +15,54 @@ def detect_columns(df):
     columns = [str(col).strip().lower() for col in df.columns]
     original_cols = list(df.columns)
     
-    # Padrões Regex para detecção
-    name_patterns = [r'nome', r'name', r'lead', r'cliente', r'contato', r'artista']
-    email_patterns = [r'email', r'e-mail', r'mail', r'correio']
-    phone_patterns = [r'tel', r'phone', r'fone', r'celular', r'wpp', r'whatsapp', r'telefone']
-    
-    # 1. Tentar mapear por correspondência exata ou padrões comuns
+    # 1. MAPEAMENTO DE NOME (Prioridade Alta)
+    high_priority_name = [
+        r'^nome$', r'^name$', r'^lead$', r'^cliente$', r'^contato$', 
+        r'artist_name', r'nome_artista', r'artista', r'artist', 
+        r'nome\s*completo', r'full_name', r'fullname'
+    ]
     for i, col in enumerate(columns):
-        orig_col = original_cols[i]
-        
-        # Mapear Nome
-        if col_mapping["name"] is None:
-            if any(re.search(pat, col) for pat in name_patterns):
-                col_mapping["name"] = orig_col
-                continue
-                
-        # Mapear Email
-        if col_mapping["email"] is None:
-            if any(re.search(pat, col) for pat in email_patterns):
-                col_mapping["email"] = orig_col
-                continue
-                
-        # Mapear Telefone
-        if col_mapping["phone"] is None:
-            if any(re.search(pat, col) for pat in phone_patterns):
-                col_mapping["phone"] = orig_col
-                continue
+        if any(re.search(pat, col) for pat in high_priority_name):
+            col_mapping["name"] = original_cols[i]
+            break
+            
+    # 2. MAPEAMENTO DE EMAIL (Prioridade)
+    email_patterns = [r'^email$', r'^e-mail$', r'^mail$', r'email', r'e-mail']
+    for i, col in enumerate(columns):
+        if original_cols[i] == col_mapping["name"]:
+            continue
+        if any(re.search(pat, col) for pat in email_patterns):
+            col_mapping["email"] = original_cols[i]
+            break
+            
+    # 3. MAPEAMENTO DE TELEFONE (Prioridade)
+    phone_patterns = [
+        r'^telefone$', r'^tel$', r'^phone$', r'^fone$', r'^celular$', 
+        r'^wpp$', r'^whatsapp$', r'telefone', r'tel', r'phone', r'celular'
+    ]
+    for i, col in enumerate(columns):
+        if original_cols[i] in [col_mapping["name"], col_mapping["email"]]:
+            continue
+        if any(re.search(pat, col) for pat in phone_patterns):
+            col_mapping["phone"] = original_cols[i]
+            break
 
-    # 2. Heurística Secundária: Se não encontrou Nome, pega a primeira coluna de texto
+    # 4. MAPEAMENTO DE NOME (Fallback / Baixa Prioridade)
+    # Se não encontrou, busca qualquer coluna que contenha "name" ou "nome",
+    # desde que não contenha termos conhecidos de exclusão (como música, faixa, etc.)
+    if col_mapping["name"] is None:
+        exclude_terms = ['track', 'music', 'song', 'album', 'faixa', 'musica', 'file', 'arquivo']
+        for i, col in enumerate(columns):
+            if any(term in col for term in exclude_terms):
+                continue
+            if 'nome' in col or 'name' in col:
+                col_mapping["name"] = original_cols[i]
+                break
+
+    # 5. Heurística Secundária Geral para Nome
     if col_mapping["name"] is None and len(original_cols) > 0:
         col_mapping["name"] = original_cols[0]
+
         
     # 3. Heurística Secundária para Email e Telefone (analisando os dados da coluna)
     for col in original_cols:
