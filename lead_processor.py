@@ -70,6 +70,17 @@ def detect_columns(df):
         if col == col_mapping["name"]:
             continue
             
+        # Ignorar colunas que claramente não são telefone/email baseado no nome do cabeçalho
+        col_lower = str(col).lower()
+        exclude_from_heuristics = [
+            'date', 'data', 'time', 'hora', 'updated', 'created', 'generation',
+            'hex', 'score', 'listeners', 'royalties', 'rank', 'id', 'link', 'url',
+            'estimated', 'thesis', 'driver', 'country', 'career', 'genre', 'stage',
+            'selected', 'strm', 'spotify', 'instagram', 'facebook', 'youtube', 'twitter'
+        ]
+        if any(term in col_lower for term in exclude_from_heuristics):
+            continue
+            
         # Obter amostra de dados não nulos
         sample = df[col].dropna().head(10).astype(str).tolist()
         if not sample:
