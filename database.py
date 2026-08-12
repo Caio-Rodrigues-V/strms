@@ -11,22 +11,28 @@ os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 def normalize_name(name):
     if not isinstance(name, str):
         return ""
-    # Remover espaços extras nas pontas, converter para minúsculas e simplificar múltiplos espaços
     name = name.strip().lower()
     name = re.sub(r'\s+', ' ', name)
+    if name in ["nan", "none", "null", "undefined", "-", ""]:
+        return ""
     return name
 
 def normalize_email(email):
     if not isinstance(email, str):
         return ""
-    return email.strip().lower()
+    email = email.strip().lower()
+    if email in ["nan", "none", "null", "undefined", "-", ""]:
+        return ""
+    return email
 
 def normalize_phone(phone):
     if not isinstance(phone, (str, int, float)):
         return ""
-    # Manter apenas números
     phone_str = str(phone)
     phone_digits = re.sub(r'\D', '', phone_str)
+    # Se o telefone resultante for muito curto (menos de 4 dígitos), desconsiderar
+    if len(phone_digits) < 4:
+        return ""
     return phone_digits
 
 def get_db_connection():
