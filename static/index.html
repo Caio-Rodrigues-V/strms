@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeadFilter Pro | Gestão Inteligente de Leads</title>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <!-- Folha de Estilo Customizada -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Fundo com gradientes animados -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="app-container">
+        <!-- Sidebar / Barra Lateral -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="material-icons-round logo-icon">filter_alt</span>
+                <div class="brand-text">
+                    <h1>LeadFilter<span>Pro</span></h1>
+                    <p>Antiduplicidade inteligente</p>
+                </div>
+            </div>
+            
+            <nav class="menu">
+                <button class="menu-item active" data-tab="dashboard">
+                    <span class="material-icons-round">dashboard</span>
+                    Dashboard
+                </button>
+                <button class="menu-item" data-tab="processar">
+                    <span class="material-icons-round">difference</span>
+                    Filtrar Leads
+                </button>
+                <button class="menu-item" data-tab="historico">
+                    <span class="material-icons-round">history</span>
+                    Importar Histórico
+                </button>
+                <button class="menu-item" data-tab="database">
+                    <span class="material-icons-round">storage</span>
+                    Banco de Leads
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="db-status-card">
+                    <p>Banco de Dados</p>
+                    <h3 id="sidebar-total-leads">0</h3>
+                    <span class="status-badge"><span class="pulse-dot"></span> Ativo</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Área Principal de Conteúdo -->
+        <main class="main-content">
+            <!-- Header de Controle superior -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h2 id="page-title">Dashboard</h2>
+                    <p id="page-description">Visão geral do seu banco e estatísticas de leads</p>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">U</div>
+                    <span>Administrador</span>
+                </div>
+            </header>
+
+            <!-- TABS / SEÇÕES -->
+            
+            <!-- 1. DASHBOARD -->
+            <section id="tab-dashboard" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper blue">
+                            <span class="material-icons-round">group</span>
+                        </div>
+                        <div class="stat-data">
+                            <p>Leads no Banco</p>
+                            <h3 id="stat-total-leads">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper green">
+                            <span class="material-icons-round">file_upload</span>
+                        </div>
+                        <div class="stat-data">
+                            <p>Planilhas Processadas</p>
+                            <h3 id="stat-files-processed">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper purple">
+                            <span class="material-icons-round">do_not_disturb_on</span>
+                        </div>
+                        <div class="stat-data">
+                            <p>Duplicados Barrados</p>
+                            <h3 id="stat-duplicates-removed">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Painel Informativo / Fluxo de Trabalho -->
+                <div class="card workflow-card">
+                    <div class="card-header">
+                        <span class="material-icons-round icon-header">info</span>
+                        <h3>Como funciona o fluxo?</h3>
+                    </div>
+                    <div class="workflow-steps">
+                        <div class="step">
+                            <div class="step-num">1</div>
+                            <h4>Importar Histórico</h4>
+                            <p>Envie sua lista de leads já existentes para alimentar nosso banco.</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-num">2</div>
+                            <h4>Subir Nova Planilha</h4>
+                            <p>Faça o upload do seu novo arquivo para comparação inteligente.</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-num">3</div>
+                            <h4>Análise e Limpeza</h4>
+                            <p>O backend remove repetidos por Nome, Email e Telefone simultaneamente.</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-num">4</div>
+                            <h4>Baixar Limpo</h4>
+                            <p>Faça o download do novo arquivo limpo e pronto para envio.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. FILTRAR LEADS -->
+            <section id="tab-processar" class="tab-content">
+                <div class="grid-layout">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="material-icons-round icon-header">upload_file</span>
+                            <h3>Upload de Nova Planilha</h3>
+                        </div>
+                        <p class="card-subtitle">Suba uma planilha (.xlsx, .xls ou .csv). Nós limparemos os duplicados e atualizaremos a base.</p>
+                        
+                        <div class="drop-zone" id="drop-zone-process">
+                            <span class="material-icons-round drop-icon">cloud_upload</span>
+                            <p>Arraste e solte o seu arquivo aqui ou <span class="browse-btn">procure</span></p>
+                            <span class="file-name-label" id="file-name-process">Nenhum arquivo selecionado</span>
+                            <input type="file" id="file-input-process" accept=".xlsx,.xls,.csv" class="hidden-file-input">
+                        </div>
+
+                        <!-- Configuração Manual de Colunas (Opcional, expandível) -->
+                        <details class="column-mapping-details">
+                            <summary>
+                                <span class="material-icons-round">settings</span>
+                                Mapeamento Manual de Colunas (Opcional)
+                            </summary>
+                            <div class="mapping-fields">
+                                <p class="info-text">Por padrão, o sistema tenta adivinhar as colunas. Ajuste abaixo se necessário:</p>
+                                <div class="form-group">
+                                    <label for="map-name-process">Coluna de Nome</label>
+                                    <input type="text" id="map-name-process" placeholder="Ex: Nome, Lead, Cliente">
+                                </div>
+                                <div class="form-group">
+                                    <label for="map-email-process">Coluna de E-mail</label>
+                                    <input type="text" id="map-email-process" placeholder="Ex: E-mail, Email, Mail">
+                                </div>
+                                <div class="form-group">
+                                    <label for="map-phone-process">Coluna de Telefone</label>
+                                    <input type="text" id="map-phone-process" placeholder="Ex: Telefone, Celular, Whatsapp">
+                                </div>
+                            </div>
+                        </details>
+
+                        <button class="btn btn-primary" id="btn-process-leads" disabled>
+                            <span class="material-icons-round">play_arrow</span>
+                            Filtrar e Limpar Planilha
+                        </button>
+                    </div>
+
+                    <!-- Bloco de Resultados -->
+                    <div class="card result-card" id="result-box-process">
+                        <div class="card-header">
+                            <span class="material-icons-round icon-header green-icon">check_circle</span>
+                            <h3>Resultado do Processamento</h3>
+                        </div>
+                        
+                        <div class="result-stats">
+                            <div class="res-stat-item">
+                                <span class="label">Total Analisado</span>
+                                <span class="value" id="res-total">0</span>
+                            </div>
+                            <div class="res-stat-item green-text">
+                                <span class="label">Leads Novos (Salvos)</span>
+                                <span class="value" id="res-new">0</span>
+                            </div>
+                            <div class="res-stat-item red-text">
+                                <span class="label">Duplicados Removidos</span>
+                                <span class="value" id="res-dup">0</span>
+                            </div>
+                        </div>
+
+                        <div class="mapped-columns-summary">
+                            <h4>Colunas Mapeadas pelo Algoritmo:</h4>
+                            <ul>
+                                <li>Nome: <strong id="res-map-name">-</strong></li>
+                                <li>E-mail: <strong id="res-map-email">-</strong></li>
+                                <li>Telefone: <strong id="res-map-phone">-</strong></li>
+                            </ul>
+                        </div>
+
+                        <button class="btn btn-success btn-block" id="btn-download-filtered">
+                            <span class="material-icons-round">download</span>
+                            Baixar Planilha Filtrada (.xlsx)
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. IMPORTAR HISTÓRICO -->
+            <section id="tab-historico" class="tab-content">
+                <div class="grid-layout">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="material-icons-round icon-header">history</span>
+                            <h3>Importar Leads Antigos</h3>
+                        </div>
+                        <p class="card-subtitle">Importe a sua planilha contendo todos os leads que você já enviou no passado. Isso formará a base para evitar envios duplicados nas próximas planilhas.</p>
+                        
+                        <div class="drop-zone" id="drop-zone-history">
+                            <span class="material-icons-round drop-icon">storage</span>
+                            <p>Arraste e solte o arquivo histórico aqui ou <span class="browse-btn">procure</span></p>
+                            <span class="file-name-label" id="file-name-history">Nenhum arquivo selecionado</span>
+                            <input type="file" id="file-input-history" accept=".xlsx,.xls,.csv" class="hidden-file-input">
+                        </div>
+
+                        <details class="column-mapping-details">
+                            <summary>
+                                <span class="material-icons-round">settings</span>
+                                Mapeamento Manual de Colunas (Opcional)
+                            </summary>
+                            <div class="mapping-fields">
+                                <p class="info-text">Por padrão, o sistema tenta adivinhar as colunas do seu histórico. Ajuste abaixo se necessário:</p>
+                                <div class="form-group">
+                                    <label for="map-name-history">Coluna de Nome</label>
+                                    <input type="text" id="map-name-history" placeholder="Ex: Nome, Lead, Cliente">
+                                </div>
+                                <div class="form-group">
+                                    <label for="map-email-history">Coluna de E-mail</label>
+                                    <input type="text" id="map-email-history" placeholder="Ex: E-mail, Email, Mail">
+                                </div>
+                                <div class="form-group">
+                                    <label for="map-phone-history">Coluna de Telefone</label>
+                                    <input type="text" id="map-phone-history" placeholder="Ex: Telefone, Celular, Whatsapp">
+                                </div>
+                            </div>
+                        </details>
+
+                        <button class="btn btn-purple" id="btn-import-history" disabled>
+                            <span class="material-icons-round">publish</span>
+                            Alimentar Banco de Dados
+                        </button>
+                    </div>
+
+                    <!-- Card Informativo -->
+                    <div class="card info-card">
+                        <div class="card-header">
+                            <span class="material-icons-round icon-header purple-icon">tips_and_updates</span>
+                            <h3>Importante sobre o Histórico</h3>
+                        </div>
+                        <div class="info-body">
+                            <p>Ao importar o histórico, o sistema apenas <strong>cadastra</strong> esses leads no banco de dados local.</p>
+                            <ul>
+                                <li>Nenhum arquivo de saída será gerado.</li>
+                                <li>Leads que já existem no banco com o mesmo Nome/Email/Telefone serão ignorados automaticamente (sem criar duplicatas internas).</li>
+                                <li>Você pode fazer múltiplos uploads históricos de planilhas diferentes para juntar todas no banco.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. BANCO DE LEADS -->
+            <section id="tab-database" class="tab-content">
+                <div class="card">
+                    <div class="table-controls">
+                        <!-- Campo de busca -->
+                        <div class="search-box">
+                            <span class="material-icons-round">search</span>
+                            <input type="text" id="db-search-input" placeholder="Pesquisar por nome, email ou telefone...">
+                        </div>
+                        
+                        <!-- Ações de perigo -->
+                        <button class="btn btn-danger btn-sm" id="btn-clear-database">
+                            <span class="material-icons-round">delete_sweep</span>
+                            Limpar Banco de Dados
+                        </button>
+                    </div>
+
+                    <!-- Tabela de Leads -->
+                    <div class="table-container">
+                        <table class="leads-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th>Telefone</th>
+                                    <th>Adicionado em</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leads-table-body">
+                                <tr>
+                                    <td colspan="5" class="empty-table">Carregando leads...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginação -->
+                    <div class="pagination">
+                        <span class="pagination-info" id="pagination-info">Mostrando 0 de 0 leads</span>
+                        <div class="pagination-buttons">
+                            <button class="btn btn-outline" id="btn-prev-page" disabled>Anterior</button>
+                            <button class="btn btn-outline" id="btn-next-page" disabled>Próximo</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notifications / Alertas -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Script Principal -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
