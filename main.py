@@ -178,6 +178,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 if __name__ == "__main__":
     import uvicorn
+    # Teste de deploy para validar persistência de dados no Railway
     port = int(os.environ.get("PORT", 8000))
     # No Railway ou produção, usamos host 0.0.0.0 e reload=False se DATA_DIR estiver definido
     is_prod = os.environ.get("DATA_DIR") is not None
