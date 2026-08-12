@@ -10,6 +10,7 @@ let dbTotalLeads = 0;
 let dbSearchQuery = "";
 let processedFilesCount = 0;
 let totalDuplicatesBlocked = 0;
+let resultCardHideTimeout = null;
 
 // Arquivos selecionados
 let selectedProcessFile = null;
@@ -499,6 +500,10 @@ String.prototype.stripOrEmpty = function() {
 
 // Controlar visualização do painel de resultados
 function showResultCard(stats) {
+    if (resultCardHideTimeout) {
+        clearTimeout(resultCardHideTimeout);
+        resultCardHideTimeout = null;
+    }
     const box = document.getElementById("result-box-process");
     
     document.getElementById("res-total").textContent = stats.total_rows;
@@ -520,8 +525,12 @@ function showResultCard(stats) {
 function hideResultCard() {
     const box = document.getElementById("result-box-process");
     box.classList.remove("active");
-    setTimeout(() => {
+    if (resultCardHideTimeout) {
+        clearTimeout(resultCardHideTimeout);
+    }
+    resultCardHideTimeout = setTimeout(() => {
         box.style.display = "none";
+        resultCardHideTimeout = null;
     }, 400);
 }
 
