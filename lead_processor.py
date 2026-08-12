@@ -16,9 +16,9 @@ def detect_columns(df):
     original_cols = list(df.columns)
     
     # Padrões Regex para detecção
-    name_patterns = [r'^nome$', r'^name$', r'^lead$', r'^cliente$', r'^contato$', r'nome\s*completo']
-    email_patterns = [r'^email$', r'^e-mail$', r'^mail$', r'^correio']
-    phone_patterns = [r'^tel$', r'^phone$', r'^fone$', r'^celular$', r'^wpp$', r'^whatsapp$', r'^telefone$']
+    name_patterns = [r'nome', r'name', r'lead', r'cliente', r'contato', r'artista']
+    email_patterns = [r'email', r'e-mail', r'mail', r'correio']
+    phone_patterns = [r'tel', r'phone', r'fone', r'celular', r'wpp', r'whatsapp', r'telefone']
     
     # 1. Tentar mapear por correspondência exata ou padrões comuns
     for i, col in enumerate(columns):
